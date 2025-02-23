@@ -1,7 +1,8 @@
 flask
-gdown
 opencv-python
 numpy
 mediapipe
 keras
 tensorflow
+gdown
+gunicorn

@@ -1,6 +1,5 @@
-from flask import Flask, request, jsonify
 import os
-import gdown
+from flask import Flask, request, jsonify
 import cv2
 import numpy as np
 import mediapipe as mp
@@ -9,7 +8,12 @@ from collections import Counter
 
 app = Flask(__name__)
 
+# Ensure model exists before loading
 FER_MODEL_PATH = os.path.join(os.path.dirname(__file__), "face_model.h5")
+
+if not os.path.exists(FER_MODEL_PATH):
+    raise FileNotFoundError(f"Model file not found: {FER_MODEL_PATH}")
+
 emotion_model = load_model(FER_MODEL_PATH)
 EMOTION_LABELS = ["Angry", "Disgust", "Fear", "Happy", "Neutral", "Sad", "Surprise"]
 
@@ -66,8 +70,5 @@ def analyze_video(video_path):
     cap.release()
     return {"most_frequent_emotion": Counter(emotions).most_common(1)[0][0] if emotions else "Neutral"}
 
-def handler(event, context):
-    return app(event, context)
-
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(host="0.0.0.0", port=5000)
